@@ -3,7 +3,6 @@
 namespace IWD\JOBINTERVIEW\Traits;
 
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 /**
  * Trait DecodeFileTrait
@@ -11,28 +10,26 @@ use Symfony\Component\Serializer\Exception\UnsupportedException;
  */
 trait DecodeFileTrait
 {
-  /**
-   * Decode json files into array
-   * Supported format : json, xml
-   * @throws UnsupportedException
-   */
-  public function decodeFiles(string $ext = 'json', string $dir = 'data'): \Generator
-  {
-    if (!in_array($ext, ['json', 'xml'])) {
-      throw new UnsupportedException('Invalid format');
+    /**
+     * Decode json files into array
+     */
+    public function decodeFiles($filter = '*.json', string $dir = 'data'): \Generator
+    {
+        foreach ($this->loadFiles($filter, $dir) as $file) {
+            $decodedFile = $this['serializer']->decode($file->getContents(), 'json');
+            yield $decodedFile;
+        }
     }
-    foreach ($this->loadFiles("*.$ext", $dir) as $file) {
-      $decodedFile = $this['serializer']->decode($file->getContents(), $ext);
-      yield $decodedFile;
-    }
-  }
 
-  /**
-   * Load files from directory
-   */
-  public function loadFiles(string $pattern, string $dir): Finder
-  {
-    $finder = new Finder();
-    return $finder->files()->name($pattern)->in(ROOT_PATH . '/' . $dir);
-  }
+    /**
+     * Load files from directory
+     */
+    public function loadFiles($filter, string $dir): Finder
+    {
+        if (!defined('ROOT_PATH')) {
+            define('ROOT_PATH', realpath('.'));
+        }
+        $finder = new Finder();
+        return $finder->files()->name($filter)->in(ROOT_PATH . '/' . $dir);
+    }
 }

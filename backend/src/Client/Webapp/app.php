@@ -1,11 +1,15 @@
 <?php
 declare(strict_types=1);
 
-if (file_exists(ROOT_PATH.'/vendor/autoload.php') === false) {
+if(!defined('ROOT_PATH')) {
+    define('ROOT_PATH', realpath('.'));
+}
+
+if (file_exists(ROOT_PATH . '/vendor/autoload.php') === false) {
     echo "run this command first: composer install";
     exit();
 }
-require_once ROOT_PATH.'/vendor/autoload.php';
+require_once ROOT_PATH . '/vendor/autoload.php';
 
 use IWD\JOBINTERVIEW\BackendApplication;
 use IWD\JOBINTERVIEW\Provider\SurveysControllerProvider;
@@ -23,11 +27,11 @@ $app->after(function (Request $request, Response $response) {
     $response->headers->set('Access-Control-Allow-Origin', '*');
 });
 
-$app->get('/', function () use ($app) {
+$app->get('/', function () {
     return new Response('Status OK');
 });
 
-$app->mount('/surveys', new SurveysControllerProvider());
+$app->mount('/', new SurveysControllerProvider());
 
 $app->run();
 

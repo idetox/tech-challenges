@@ -2,7 +2,10 @@
 
 namespace IWD\JOBINTERVIEW\Service\contracts;
 
-
+/**
+ * Interface SurveyInterface.
+ * @package IWD\JOBINTERVIEW\Service\contracts
+ */
 interface SurveyInterface
 {
   /**

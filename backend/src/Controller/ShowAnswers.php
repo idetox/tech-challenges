@@ -2,143 +2,69 @@
 
 namespace IWD\JOBINTERVIEW\Controller;
 
-use Silex\Application;
+use IWD\JOBINTERVIEW\BackendApplication;
+use IWD\JOBINTERVIEW\Exception\FileMalformedException;
+use IWD\JOBINTERVIEW\Exception\WrongTypeException;
+use IWD\JOBINTERVIEW\Service\AnswerService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class ShowAnswers
+/**
+ * Class ShowAnswers.
+ * @package IWD\JOBINTERVIEW\Controller
+ */
+class ShowAnswers extends AnswerAbstractController
 {
-  private $request;
-  private $app;
-  private $qcm;
-  private $numeric;
-  private $date;
-  private $survey;
+    private $request;
+    private $app;
+    private $answerService;
 
-  public function __construct(Application $app, Request $request)
-  {
-    $this->request = $request;
-    $this->app = $app;
-    $this->qcm = $this->initQCM();
-    $this->numeric = $this->initNumeric();
-    $this->date = $this->initDate();
-    $this->survey = [];
-  }
-
-  public function __invoke()
-  {
-    $code = $this->request->get('code');
-    $type = $this->request->get('type');
-    foreach ($this->app->decodeFiles() as $decodeFile) {
-      if ($this->skip($decodeFile, $code)) {
-        continue;
-      }
-      $this->survey = $decodeFile['survey'];
-      $this->aggregateQuestions($decodeFile['questions'], $type);
+    public function __construct(BackendApplication $app, Request $request, AnswerService $answerService)
+    {
+        $this->request = $request;
+        $this->app = $app;
+        $this->answerService = $answerService;
     }
-    return new JsonResponse($this->renderQuestions($type));
-  }
 
-  private function renderQuestions($type = null)
-  {
-    if (null === $type || 'qcm' === $type) {
-      $result['qcm'] = $this->qcm;
+    public function __invoke()
+    {
+        $code = $this->request->get('code');
+        $type = $this->request->get('type');
+        try {
+            if (!\in_array($type, [null, 'qcm', 'numeric', 'date'], true)) {
+                throw new WrongTypeException('Wrong answer type');
+            }
+            foreach ($this->app->decodeFiles() as $decodeFile) {
+                if ($this->skip($decodeFile, $code)) {
+                    continue;
+                }
+                $data = $this->answerService->aggregateQuestions($decodeFile['questions'], $type);
+            }
+            $response = new JsonResponse($this->answerService->renderQuestions($data ?? [], $type), JsonResponse::HTTP_OK, ['Content-Type' => 'application/json']);
+        } catch (WrongTypeException $e) {
+            $response = new JsonResponse([
+                'code' => 'unknown_type',
+                'message' => $e->getMessage(),
+                'url' => $this->app->url('show_answers', ['code' => $code, 'type' => $type]),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY, ['Content-Type' => 'application/json']);
+        } catch (FileMalformedException $e) {
+            $response = new JsonResponse([
+                'code' => 'files_malformed',
+                'message' => $e->getMessage(),
+                'url' => $this->app->url('show_answers', ['code' => $code, 'type' => $type]),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR, ['Content-Type' => 'application/json']);
+        }
+        return $response->setEncodingOptions(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
-    if (null === $type || 'numeric' === $type) {
-      // Get average
-      $this->numeric['answer'] = (float)$this->numeric['answer'] / $this->numeric['count'];
-      unset($this->numeric['count']);
 
-      $result['numeric'] = $this->numeric;
+    /**
+     * Filter answers by code
+     * @param array $data
+     * @param string $code
+     * @return bool
+     */
+    public function skip(array $data, $code): bool
+    {
+        return $code !== $data['survey']['code'];
     }
-    if (null === $type || 'date' === $type) {
-      // Get unique date & sort them by desc
-      $this->date['answer'] = array_unique($this->date['answer']);
-      rsort($this->date['answer']);
-
-      $result['date'] = $this->date;
-    }
-    return $result ?? [];
-  }
-
-  private function skip(array $data, string $code)
-  {
-    return $code !== $data['survey']['code'];
-  }
-
-  private function skipQuestion(array $data, string $type)
-  {
-    return $type !== $data['type'];
-  }
-
-  private function aggregateQuestions(array $questions, $type = null)
-  {
-    foreach ($questions as $question) {
-      if ($type && $this->skipQuestion($question, $type)) {
-        continue;
-      }
-      $this->aggregateQuestion($question);
-    }
-  }
-
-  private function countAnswers($question)
-  {
-    $options = $question['options'];
-    $this->qcm['label'] = $question['label'];
-    array_walk($question['answer'], function ($item, $key) use ($options) {
-      isset($this->qcm['answer'][$options[$key]]) ? ($this->qcm['answer'][$options[$key]] += $item ? 1 : 0)
-        : $this->qcm['answer'][$options[$key]] = $item ? 1 : 0;
-    });
-  }
-
-  private function countNumerics($question)
-  {
-    $this->numeric['label'] = $question['label'];
-    $this->numeric['answer'] += $question['answer'];
-    $this->numeric['count']++;
-  }
-
-  private function saveDates($question)
-  {
-    $this->date['label'] = $question['label'];
-    $this->date['answer'][] = $question['answer'];
-  }
-
-  private function initQCM(): array
-  {
-    $qcm['label'] = '';
-    $qcm['answer'] = [];
-    return $qcm;
-  }
-
-  private function initNumeric(): array
-  {
-    $numeric['label'] = '';
-    $numeric['answer'] = 0;
-    $numeric['count'] = 0;
-    return $numeric;
-  }
-
-  private function initDate(): array
-  {
-    $date['label'] = '';
-    $date['answer'] = [];
-    return $date;
-  }
-
-
-  private function aggregateQuestion(array $question)
-  {
-    switch (strtolower($question['type'])) {
-      case 'qcm':
-        $this->countAnswers($question);
-        break;
-      case 'numeric':
-        $this->countNumerics($question);
-        break;
-      case 'date':
-        $this->saveDates($question);
-        break;
-    }
-  }
 }

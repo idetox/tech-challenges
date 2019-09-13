@@ -2,10 +2,8 @@
 
 namespace IWD\JOBINTERVIEW\Provider;
 
-
 use IWD\JOBINTERVIEW\Normalizer\DateNormalizer;
 use IWD\JOBINTERVIEW\Normalizer\StudyNormalizer;
-use IWD\JOBINTERVIEW\Normalizer\SurveyDenormalizer;
 use IWD\JOBINTERVIEW\Service\AnswerService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -15,9 +13,13 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * Class SurveysServiceProvider.
+ * Setup serializer & AnswerService
+ * @package IWD\JOBINTERVIEW\Provider
+ */
 class SurveysServiceProvider implements ServiceProviderInterface
 {
-
   /**
    * {@inheritdoc}
    *
