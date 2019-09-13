@@ -1,5 +1,20 @@
 # IWD backend challenge
 
+## Liste des routes
+ - `/surveys` - liste les sondages
+ - `/surveys/{code}` - filtre sur un sondage via son code
+ - `/surveys/{code}/answers` - retourne les réponses d'un sondage en fonction de son code
+ - `/surveys/{code}/answers/{type}` - filtre les réponses d'un sondage en fonction de son code et du type de réponse
+
+## Tests & quality
+ - Lancer la commande `vendor\bin\phpunit`
+ - Lancer la commande `vendor\bin\phpstan analyse -l7 src`
+ - Lancer la commande `vendor\bin\php-cs-fixer fix`
+ 
+## Entities & Normalizer
+
+J'ai laissé dans le code le modèle en BDD bien que je ne l'utilise pas pour le moment, j'ai aussi créé les normaliseurs qui permettent de serialiser les fichiers json.
+ 
 ## Setup
 
 To avoid losing time, we have setup a Silex boilerplate to handle HTTP request/response.

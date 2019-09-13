@@ -1,0 +1,5 @@
+parameters:
+    level: 5
+    ignoreErrors:
+        # Ignore Doctrine method calls
+        - '#Call to an undefined method Symfony\\Component\\Serializer\\SerializerInterface::denormalize\(\)#'
