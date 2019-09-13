@@ -1,30 +1,31 @@
 <?php
 
-namespace IWD\JOBINTERVIEW\Entity;
+declare(strict_types=1);
 
+namespace IWD\JOBINTERVIEW\Entity;
 
 class Survey
 {
-  private $code;
-  private $name;
+    private $code;
+    private $name;
 
-  public function getCode(): string
-  {
-    return $this->code;
-  }
+    public function getCode(): string
+    {
+        return $this->code;
+    }
 
-  public function setCode(string $code): void
-  {
-    $this->code = $code;
-  }
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
+    }
 
-  public function getName(): string
-  {
-    return $this->name;
-  }
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
-  public function setName($name): void
-  {
-    $this->name = $name;
-  }
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
 }

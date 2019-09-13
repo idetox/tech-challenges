@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Normalizer;
 
 use IWD\JOBINTERVIEW\Entity\Date;
@@ -8,7 +10,6 @@ use IWD\JOBINTERVIEW\Entity\QCM;
 use IWD\JOBINTERVIEW\Entity\Study;
 use IWD\JOBINTERVIEW\Entity\Survey;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class StudyNormalizer extends GetSetMethodNormalizer
 {
@@ -19,6 +20,7 @@ class StudyNormalizer extends GetSetMethodNormalizer
             $questions[] = $this->denormalizeQuestion($question);
         }
         $data['questions'] = $questions ?? [];
+
         return parent::denormalize($data, $type, $format, $context);
     }
 

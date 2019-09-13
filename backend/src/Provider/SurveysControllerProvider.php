@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Provider;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -13,7 +15,6 @@ use Silex\ControllerCollection;
 
 class SurveysControllerProvider implements ControllerProviderInterface
 {
-
     /**
      * Returns routes to connect to the given application.
      *

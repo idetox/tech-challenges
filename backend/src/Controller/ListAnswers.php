@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Controller;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -11,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ListAnswers.
- * @package IWD\JOBINTERVIEW\Controller
  */
 class ListAnswers extends AnswerAbstractController
 {
@@ -50,16 +51,15 @@ class ListAnswers extends AnswerAbstractController
             $response = new JsonResponse([
                 'code' => 'survey_not_found',
                 'message' => $e->getMessage(),
-                'url' => $this->app->url('list_answers', ['code' => $code])
+                'url' => $this->app->url('list_answers', ['code' => $code]),
             ], JsonResponse::HTTP_NOT_FOUND, ['Content-Type' => 'application/json']);
         }
+
         return $response->setEncodingOptions(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     /**
-     * @param array $data
      * @param string $code
-     * @return bool
      */
     public function skip(array $data, $code): bool
     {

@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Controller;
 
 use IWD\JOBINTERVIEW\BackendApplication;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ListSurveys.
- * @package IWD\JOBINTERVIEW\Controller
  */
 class ListSurveys extends SurveyAbstractController
 {
     protected $app;
-
 
     public function __construct(BackendApplication $app)
     {
@@ -36,7 +35,8 @@ class ListSurveys extends SurveyAbstractController
         }
 
         $response = new JsonResponse($this->sortSurvey($surveys ?? []), JsonResponse::HTTP_OK, ['Content-Type' => 'application/json']);
-        return $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+
+        return $response->setEncodingOptions(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     /**
@@ -51,18 +51,19 @@ class ListSurveys extends SurveyAbstractController
         usort($surveys, function ($a, $b) {
             return strnatcmp($a['code'], $b['code']);
         });
+
         return $surveys;
     }
 
     /**
      * Skip file when survey already registered.
-     * @param array $data
+     *
      * @param array $codes
-     * @return bool
      */
     public function skip(array $data, $codes): bool
     {
         $code = $data['survey']['code'] ?? null;
-        return null === $code || \in_array($code, $codes);
+
+        return null === $code || \in_array($code, $codes, true);
     }
 }

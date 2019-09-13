@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Provider;
 
 use IWD\JOBINTERVIEW\Normalizer\DateNormalizer;
@@ -15,32 +17,31 @@ use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class SurveysServiceProvider.
- * Setup serializer & AnswerService
- * @package IWD\JOBINTERVIEW\Provider
+ * Setup serializer & AnswerService.
  */
 class SurveysServiceProvider implements ServiceProviderInterface
 {
-  /**
-   * {@inheritdoc}
-   *
-   * @param Container $app A container instance
-   */
-  public function register(Container $app)
-  {
-    $app['serializer'] = function ($app) {
-      return new Serializer($app['serializer.normalizers'], $app['serializer.encoders']);
-    };
+    /**
+     * {@inheritdoc}
+     *
+     * @param Container $app A container instance
+     */
+    public function register(Container $app): void
+    {
+        $app['serializer'] = function ($app) {
+            return new Serializer($app['serializer.normalizers'], $app['serializer.encoders']);
+        };
 
-    $app['serializer.encoders'] = function () {
-      return [new JsonEncoder(), new XmlEncoder()];
-    };
+        $app['serializer.encoders'] = function () {
+            return [new JsonEncoder(), new XmlEncoder()];
+        };
 
-    $app['serializer.normalizers'] = function () {
-      return [new StudyNormalizer(), new DateNormalizer(), new GetSetMethodNormalizer(), new DateTimeNormalizer()];
-    };
+        $app['serializer.normalizers'] = function () {
+            return [new StudyNormalizer(), new DateNormalizer(), new GetSetMethodNormalizer(), new DateTimeNormalizer()];
+        };
 
-    $app['answer_service'] = function() {
-      return new AnswerService();
-    };
-  }
+        $app['answer_service'] = function () {
+            return new AnswerService();
+        };
+    }
 }

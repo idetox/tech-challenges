@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Service;
 
 use IWD\JOBINTERVIEW\Exception\FileMalformedException;
 
 /**
  * Class AnswerService.
- * @package IWD\JOBINTERVIEW\Service
  */
 class AnswerService
 {
@@ -22,7 +23,7 @@ class AnswerService
     }
 
     /**
-     * Instantiate fields
+     * Instantiate fields.
      */
     private function initField(string $type): array
     {
@@ -31,21 +32,21 @@ class AnswerService
                 return [
                     'label' => '',
                     'answer' => 0,
-                    'count' => 0
+                    'count' => 0,
                 ];
                 break;
             case 'qcm':
             case 'date':
                 return [
                     'label' => '',
-                    'answer' => []
+                    'answer' => [],
                 ];
                 break;
         }
     }
 
     /**
-     *  Loop over questions in files to aggregate answers
+     *  Loop over questions in files to aggregate answers.
      */
     public function aggregateQuestions(array $questions, $type = null): array
     {
@@ -55,6 +56,7 @@ class AnswerService
             }
             $this->aggregateQuestion($question);
         }
+
         return [
             'qcm' => $this->qcm,
             'numeric' => $this->numeric,
@@ -65,7 +67,7 @@ class AnswerService
     /**
      * QCM : Increment product values
      * Numeric : Add all numeric values
-     * Date : List all dates
+     * Date : List all dates.
      */
     private function aggregateQuestion(array $question): void
     {
@@ -83,20 +85,20 @@ class AnswerService
     }
 
     /**
-     * Count number of products
+     * Count number of products.
      */
     private function countAnswers(array $question): void
     {
         $options = $question['options'];
         $this->qcm['label'] = $question['label'];
-        array_walk($question['answer'], function ($item, $key) use ($options) {
+        array_walk($question['answer'], function ($item, $key) use ($options): void {
             isset($this->qcm['answer'][$options[$key]]) ? ($this->qcm['answer'][$options[$key]] += $item ? 1 : 0)
                 : $this->qcm['answer'][$options[$key]] = $item ? 1 : 0;
         });
     }
 
     /**
-     * Add numeric values, do average later
+     * Add numeric values, do average later.
      */
     private function countNumerics(array $question): void
     {
@@ -104,11 +106,11 @@ class AnswerService
         if (isset($question['answer'])) {
             $this->numeric['answer'] += $question['answer'];
         }
-        $this->numeric['count']++;
+        ++$this->numeric['count'];
     }
 
     /**
-     * List all dates
+     * List all dates.
      */
     private function saveDates(array $question): void
     {
@@ -117,7 +119,7 @@ class AnswerService
     }
 
     /**
-     * Filter question by type
+     * Filter question by type.
      */
     private function skipQuestion(array $data, string $type): bool
     {
@@ -125,7 +127,8 @@ class AnswerService
     }
 
     /**
-     * Render questions
+     * Render questions.
+     *
      * @throws FileMalformedException
      */
     public function renderQuestions(array $data, ?string $type = null): array
@@ -149,7 +152,7 @@ class AnswerService
                 return [
                     $this->showQcm($data),
                     $this->showNumeric($numeric),
-                    $this->showDate($date)
+                    $this->showDate($date),
                 ];
             default:
                 return [];
@@ -170,19 +173,21 @@ class AnswerService
     private function showNumeric(array $numeric): array
     {
         // Get average & remove total count
-        $numeric['answer'] = 0 === $numeric['count'] ? 0 : (float)$numeric['answer'] / $numeric['count'];
+        $numeric['answer'] = 0 === $numeric['count'] ? 0 : (float) $numeric['answer'] / $numeric['count'];
         unset($numeric['count']);
+
         return ['numeric' => $numeric];
     }
 
     /**
-     * Print Date values
+     * Print Date values.
      */
     private function showDate(array $date): array
     {
         // Get unique date & sort them by desc
         $date['answer'] = array_unique($date['answer']);
         rsort($date['answer']);
+
         return ['date' => $date];
     }
 }

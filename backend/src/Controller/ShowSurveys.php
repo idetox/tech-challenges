@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Controller;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -38,22 +40,20 @@ class ShowSurveys extends SurveyAbstractController
             $response = new JsonResponse([
                 'code' => 'survey_not_found',
                 'message' => $e->getMessage(),
-                'url' => $this->app->url('show_surveys', ['code' => $code])
+                'url' => $this->app->url('show_surveys', ['code' => $code]),
             ], JsonResponse::HTTP_NOT_FOUND, ['Content-Type' => 'application/json']);
         }
+
         return $response->setEncodingOptions(JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     /**
-     * Filter answers by code
-     * @param array $data
+     * Filter answers by code.
+     *
      * @param string $code
-     * @return bool
      */
     public function skip(array $data, $code): bool
     {
         return $code !== $data['survey']['code'];
     }
-
-
 }
