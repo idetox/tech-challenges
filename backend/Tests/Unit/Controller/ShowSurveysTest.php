@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Tests\Unit\Controller;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -13,7 +15,7 @@ class ShowSurveysTest extends WebTestCase
     {
         $app = $this->createApplication();
         $request = new Request();
-        $showSurvey = new ShowSurveys($app,$request);
+        $showSurvey = new ShowSurveys($app, $request);
         $this->assertFalse($showSurvey->skip(['survey' => ['code' => 'XX1']], 'XX1'));
     }
 
@@ -21,15 +23,16 @@ class ShowSurveysTest extends WebTestCase
     {
         $app = $this->createApplication();
         $request = new Request();
-        $showSurvey = new ShowSurveys($app,$request);
+        $showSurvey = new ShowSurveys($app, $request);
         $this->assertTrue($showSurvey->skip(['survey' => ['code' => 'XX1']], 'XX2'));
     }
 
     public function createApplication(): BackendApplication
     {
-        if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', realpath('.'));
+        if (!\defined('ROOT_PATH')) {
+            \define('ROOT_PATH', realpath('.'));
         }
-        return require __DIR__ . '/../../../src/Client/Webapp/app.php';
+
+        return require __DIR__.'/../../../src/Client/Webapp/app.php';
     }
 }

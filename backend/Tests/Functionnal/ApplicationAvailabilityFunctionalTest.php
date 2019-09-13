@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Tests\Functionnal;
 
 use IWD\JOBINTERVIEW\BackendApplication;
 use Silex\WebTestCase;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Tests\JsonResponseTest;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ApplicationAvailabilityFunctionalTest extends WebTestCase
 {
-
     /**
-     * Check all pages return 200
+     * Check all pages return 200.
+     *
      * @dataProvider urlProvider
      */
-    public function testPagesAreSuccessful($url)
+    public function testPagesAreSuccessful($url): void
     {
         $client = $this->createClient();
         $client->request('GET', $url);
@@ -23,14 +22,15 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
     }
 
     /**
-     * Check all pages return json
+     * Check all pages return json.
+     *
      * @dataProvider urlProvider
      */
-    public function testPagesReturnJson($url)
+    public function testPagesReturnJson($url): void
     {
         $client = $this->createClient();
         $client->request('GET', $url);
-        $this->assertSame('application/json',$client->getResponse()->headers->get('Content-Type'));
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
     }
 
     public function urlProvider()
@@ -48,9 +48,10 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
      */
     public function createApplication()
     {
-        if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', realpath('.'));
+        if (!\defined('ROOT_PATH')) {
+            \define('ROOT_PATH', realpath('.'));
         }
-        return require __DIR__ . '/../../src/Client/Webapp/app.php';
+
+        return require __DIR__.'/../../src/Client/Webapp/app.php';
     }
 }

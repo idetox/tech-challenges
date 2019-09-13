@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Tests\Unit\Service;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -13,10 +15,11 @@ class AnswerServiceTest extends WebTestCase
         $class = new \ReflectionClass(AnswerService::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method;
     }
 
-    public function testInitFields()
+    public function testInitFields(): void
     {
         $answerService = new AnswerService();
         $this->assertSame(['label' => '', 'answer' => 0, 'count' => 0], $answerService->numeric);
@@ -24,7 +27,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertSame(['label' => '', 'answer' => []], $answerService->qcm);
     }
 
-    public function testAggregateQuestions()
+    public function testAggregateQuestions(): void
     {
         $answerService = new AnswerService();
         $data = [
@@ -32,31 +35,31 @@ class AnswerServiceTest extends WebTestCase
                 'type' => 'qcm',
                 'label' => 'What best sellers are available in your store?',
                 'options' => [
-                    'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6'
+                    'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6',
                 ],
                 'answer' => [
-                    true, true, true, false, true, false
-                ]
+                    true, true, true, false, true, false,
+                ],
             ],
             [
                 'type' => 'numeric',
                 'label' => 'Number of products?',
                 'options' => null,
-                'answer' => 5200
+                'answer' => 5200,
             ],
             [
                 'type' => 'date',
                 'label' => 'What is the visit date?',
                 'options' => null,
-                'answer' => '2017-08-25T12:04:50.000Z'
-            ]
+                'answer' => '2017-08-25T12:04:50.000Z',
+            ],
         ];
         $expected = $this->mockAggregatedData();
 
         $this->assertSame($expected, $answerService->aggregateQuestions($data));
     }
 
-    public function testAggregateQuestionQCM()
+    public function testAggregateQuestionQCM(): void
     {
         $answerService = new AnswerService();
         $aggregateQuestion = self::getMethod('aggregateQuestion');
@@ -64,11 +67,11 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'qcm',
             'label' => 'What best sellers are available in your store?',
             'options' => [
-                'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6'
+                'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6',
             ],
             'answer' => [
-                true, true, true, false, true, false
-            ]
+                true, true, true, false, true, false,
+            ],
         ];
         $expected = [
             'label' => 'What best sellers are available in your store?',
@@ -78,14 +81,14 @@ class AnswerServiceTest extends WebTestCase
                 'Product 3' => 1,
                 'Product 4' => 0,
                 'Product 5' => 1,
-                'Product 6' => 0
+                'Product 6' => 0,
             ],
         ];
         $aggregateQuestion->invokeArgs($answerService, [$data]);
         $this->assertSame($expected, $answerService->qcm);
     }
 
-    public function testAggregateQuestionNumeric()
+    public function testAggregateQuestionNumeric(): void
     {
         $answerService = new AnswerService();
         $aggregateQuestion = self::getMethod('aggregateQuestion');
@@ -93,7 +96,7 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'numeric',
             'label' => 'Number of products?',
             'options' => null,
-            'answer' => 5200
+            'answer' => 5200,
         ];
         $expected = [
             'label' => 'Number of products?',
@@ -104,7 +107,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertSame($expected, $answerService->numeric);
     }
 
-    public function testAggregateQuestionDate()
+    public function testAggregateQuestionDate(): void
     {
         $answerService = new AnswerService();
         $aggregateQuestion = self::getMethod('aggregateQuestion');
@@ -112,17 +115,17 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'date',
             'label' => 'What is the visit date?',
             'options' => null,
-            'answer' => '2017-08-25T12:04:50.000Z'
+            'answer' => '2017-08-25T12:04:50.000Z',
         ];
         $expected = [
             'label' => 'What is the visit date?',
-            'answer' => ['2017-08-25T12:04:50.000Z']
+            'answer' => ['2017-08-25T12:04:50.000Z'],
         ];
         $aggregateQuestion->invokeArgs($answerService, [$data]);
         $this->assertSame($expected, $answerService->date);
     }
 
-    public function testCountAnswers()
+    public function testCountAnswers(): void
     {
         $answerService = new AnswerService();
         $countAnswers = self::getMethod('countAnswers');
@@ -130,11 +133,11 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'qcm',
             'label' => 'What best sellers are available in your store?',
             'options' => [
-                'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6'
+                'Product 1', 'Product 2', 'Product 3', 'Product 4', 'Product 5', 'Product 6',
             ],
             'answer' => [
-                true, true, true, false, true, false
-            ]
+                true, true, true, false, true, false,
+            ],
         ];
         $expected = [
             'label' => 'What best sellers are available in your store?',
@@ -144,14 +147,14 @@ class AnswerServiceTest extends WebTestCase
                 'Product 3' => 1,
                 'Product 4' => 0,
                 'Product 5' => 1,
-                'Product 6' => 0
+                'Product 6' => 0,
             ],
         ];
         $countAnswers->invokeArgs($answerService, [$data]);
         $this->assertSame($expected, $answerService->qcm);
     }
 
-    public function testCountNumerics()
+    public function testCountNumerics(): void
     {
         $answerService = new AnswerService();
         $countNumerics = self::getMethod('countNumerics');
@@ -159,7 +162,7 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'numeric',
             'label' => 'Number of products?',
             'options' => null,
-            'answer' => 5200
+            'answer' => 5200,
         ];
         $expected = [
             'label' => 'Number of products?',
@@ -170,7 +173,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertSame($expected, $answerService->numeric);
     }
 
-    public function testSaveDates()
+    public function testSaveDates(): void
     {
         $answerService = new AnswerService();
         $saveDates = self::getMethod('saveDates');
@@ -178,17 +181,17 @@ class AnswerServiceTest extends WebTestCase
             'type' => 'date',
             'label' => 'What is the visit date?',
             'options' => null,
-            'answer' => '2017-08-25T12:04:50.000Z'
+            'answer' => '2017-08-25T12:04:50.000Z',
         ];
         $expected = [
             'label' => 'What is the visit date?',
-            'answer' => ['2017-08-25T12:04:50.000Z']
+            'answer' => ['2017-08-25T12:04:50.000Z'],
         ];
         $saveDates->invokeArgs($answerService, [$data]);
         $this->assertSame($expected, $answerService->date);
     }
 
-    public function testSkipQuestionFalse()
+    public function testSkipQuestionFalse(): void
     {
         $answerService = new AnswerService();
         $skipQuestion = self::getMethod('skipQuestion');
@@ -196,7 +199,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertFalse($skipQuestion->invokeArgs($answerService, [['type' => 'qcm'], 'qcm']));
     }
 
-    public function testSkipQuestionTrue()
+    public function testSkipQuestionTrue(): void
     {
         $answerService = new AnswerService();
         $skipQuestion = self::getMethod('skipQuestion');
@@ -204,7 +207,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertTrue($skipQuestion->invokeArgs($answerService, [['type' => 'numeric'], 'qcm']));
     }
 
-    public function testRenderQuestionsEmpty()
+    public function testRenderQuestionsEmpty(): void
     {
         $answerService = new AnswerService();
         $data = $this->mockAggregatedData();
@@ -212,7 +215,7 @@ class AnswerServiceTest extends WebTestCase
         $this->assertSame([], $answerService->renderQuestions($data, 'test'));
     }
 
-    public function testRenderQuestionsQCM()
+    public function testRenderQuestionsQCM(): void
     {
         $answerService = new AnswerService();
         $data = $this->mockAggregatedData();
@@ -226,14 +229,14 @@ class AnswerServiceTest extends WebTestCase
                     'Product 3' => 1,
                     'Product 4' => 0,
                     'Product 5' => 1,
-                    'Product 6' => 0
+                    'Product 6' => 0,
                 ],
-            ]
+            ],
         ];
         $this->assertSame($expected, $answerService->renderQuestions($data, 'qcm'));
     }
 
-    public function testRenderQuestionsNumeric()
+    public function testRenderQuestionsNumeric(): void
     {
         $answerService = new AnswerService();
         $data = $this->mockAggregatedData();
@@ -241,13 +244,13 @@ class AnswerServiceTest extends WebTestCase
         $expected = [
             'numeric' => [
                 'label' => 'Number of products?',
-                'answer' => (float)5200
-            ]
+                'answer' => (float) 5200,
+            ],
         ];
         $this->assertSame($expected, $answerService->renderQuestions($data, 'numeric'));
     }
 
-    public function testRenderQuestionsDate()
+    public function testRenderQuestionsDate(): void
     {
         $answerService = new AnswerService();
         $data = $this->mockAggregatedData();
@@ -255,13 +258,13 @@ class AnswerServiceTest extends WebTestCase
         $expected = [
             'date' => [
                 'label' => 'What is the visit date?',
-                'answer' => ['2017-08-25T12:04:50.000Z']
-            ]
+                'answer' => ['2017-08-25T12:04:50.000Z'],
+            ],
         ];
         $this->assertSame($expected, $answerService->renderQuestions($data, 'date'));
     }
 
-    public function testShowQcm()
+    public function testShowQcm(): void
     {
         $answerService = new AnswerService();
         $showQcm = self::getMethod('showQcm');
@@ -275,15 +278,15 @@ class AnswerServiceTest extends WebTestCase
                     'Product 3' => 1,
                     'Product 4' => 0,
                     'Product 5' => 1,
-                    'Product 6' => 0
+                    'Product 6' => 0,
                 ],
-            ]
+            ],
         ];
 
         $this->assertSame($expected, $showQcm->invokeArgs($answerService, [$data]));
     }
 
-    public function testShowNumeric()
+    public function testShowNumeric(): void
     {
         $answerService = new AnswerService();
         $showNumeric = self::getMethod('showNumeric');
@@ -291,14 +294,14 @@ class AnswerServiceTest extends WebTestCase
         $expected = [
             'numeric' => [
                 'label' => 'Number of products?',
-                'answer' => (float)5200,
-            ]
+                'answer' => (float) 5200,
+            ],
         ];
 
         $this->assertSame($expected, $showNumeric->invokeArgs($answerService, [$data['numeric']]));
     }
 
-    public function testShowDate()
+    public function testShowDate(): void
     {
         $answerService = new AnswerService();
         $showDate = self::getMethod('showDate');
@@ -306,8 +309,8 @@ class AnswerServiceTest extends WebTestCase
         $expected = [
             'date' => [
                 'label' => 'What is the visit date?',
-                'answer' => ['2017-08-25T12:04:50.000Z']
-            ]
+                'answer' => ['2017-08-25T12:04:50.000Z'],
+            ],
         ];
 
         $this->assertSame($expected, $showDate->invokeArgs($answerService, [$data['date']]));
@@ -315,10 +318,11 @@ class AnswerServiceTest extends WebTestCase
 
     public function createApplication(): BackendApplication
     {
-        if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', realpath('.'));
+        if (!\defined('ROOT_PATH')) {
+            \define('ROOT_PATH', realpath('.'));
         }
-        return require __DIR__ . '/../../../src/Client/Webapp/app.php';
+
+        return require __DIR__.'/../../../src/Client/Webapp/app.php';
     }
 
     private function mockAggregatedData()
@@ -332,7 +336,7 @@ class AnswerServiceTest extends WebTestCase
                     'Product 3' => 1,
                     'Product 4' => 0,
                     'Product 5' => 1,
-                    'Product 6' => 0
+                    'Product 6' => 0,
                 ],
             ],
             'numeric' => [
@@ -342,8 +346,8 @@ class AnswerServiceTest extends WebTestCase
             ],
             'date' => [
                 'label' => 'What is the visit date?',
-                'answer' => ['2017-08-25T12:04:50.000Z']
-            ]
+                'answer' => ['2017-08-25T12:04:50.000Z'],
+            ],
         ];
     }
 }

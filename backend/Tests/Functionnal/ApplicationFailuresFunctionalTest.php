@@ -1,43 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Tests\Functionnal;
 
 use IWD\JOBINTERVIEW\BackendApplication;
 use Silex\WebTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Tests\JsonResponseTest;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ApplicationFailuresFunctionalTest extends WebTestCase
 {
     /**
-     * Check return code when wrong code passed to url
+     * Check return code when wrong code passed to url.
      */
-    public function testWrongCodeShowSurvey()
+    public function testWrongCodeShowSurvey(): void
     {
         $client = $this->createClient();
         $client->request('GET', '/surveys/XXX');
-        $this->assertSame(JsonResponse::HTTP_NOT_FOUND,$client->getResponse()->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
     }
 
     /**
-     * Check return code when wrong code passed to url
+     * Check return code when wrong code passed to url.
      */
-    public function testWrongCodeListAnswer()
+    public function testWrongCodeListAnswer(): void
     {
         $client = $this->createClient();
         $client->request('GET', '/surveys/XXX/answers');
-        $this->assertSame(JsonResponse::HTTP_NOT_FOUND,$client->getResponse()->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
     }
 
     /**
-     * Check return code when wrong type passed to url
+     * Check return code when wrong type passed to url.
      */
-    public function testWrongTypeShowAnswer()
+    public function testWrongTypeShowAnswer(): void
     {
         $client = $this->createClient();
         $client->request('GET', '/surveys/XX1/answers/test');
-        $this->assertSame(JsonResponse::HTTP_UNPROCESSABLE_ENTITY,$client->getResponse()->getStatusCode());
+        $this->assertSame(JsonResponse::HTTP_UNPROCESSABLE_ENTITY, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -47,9 +47,10 @@ class ApplicationFailuresFunctionalTest extends WebTestCase
      */
     public function createApplication()
     {
-        if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', realpath('.'));
+        if (!\defined('ROOT_PATH')) {
+            \define('ROOT_PATH', realpath('.'));
         }
-        return require __DIR__ . '/../../src/Client/Webapp/app.php';
+
+        return require __DIR__.'/../../src/Client/Webapp/app.php';
     }
 }

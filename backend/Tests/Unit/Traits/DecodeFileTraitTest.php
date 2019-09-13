@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IWD\JOBINTERVIEW\Tests\Unit\Traits;
 
 use IWD\JOBINTERVIEW\BackendApplication;
@@ -10,9 +12,9 @@ use Symfony\Component\Finder\Finder;
 class DecodeFileTraitTest extends WebTestCase
 {
     /**
-     * Test DecodeFileTrait exists
+     * Test DecodeFileTrait exists.
      */
-    public function testDecodeFileTraitExists()
+    public function testDecodeFileTraitExists(): void
     {
         $this->assertTrue(trait_exists(DecodeFileTrait::class));
     }
@@ -20,7 +22,7 @@ class DecodeFileTraitTest extends WebTestCase
     /**
      * Test loadFiles result is instanceof class Finder.
      */
-    public function testFinderClassLoadFiles()
+    public function testFinderClassLoadFiles(): void
     {
         /** @var BackendApplication $app */
         $app = $this->createApplication();
@@ -30,7 +32,7 @@ class DecodeFileTraitTest extends WebTestCase
     /**
      * Test loadFiles empty.
      */
-    public function testEmptyLoadFiles()
+    public function testEmptyLoadFiles(): void
     {
         /** @var BackendApplication $app */
         $app = $this->createApplication();
@@ -41,7 +43,7 @@ class DecodeFileTraitTest extends WebTestCase
     /**
      * Test decodeFiles function throwing UnsupportedException.
      */
-    public function testFilterDecodeFiles()
+    public function testFilterDecodeFiles(): void
     {
         /** @var BackendApplication $app */
         $app = $this->createApplication();
@@ -51,7 +53,7 @@ class DecodeFileTraitTest extends WebTestCase
     /**
      * Test decodeFiles function.
      */
-    public function testDecodeFiles()
+    public function testDecodeFiles(): void
     {
         /** @var BackendApplication $app */
         $app = $this->createApplication();
@@ -63,9 +65,10 @@ class DecodeFileTraitTest extends WebTestCase
      */
     public function createApplication()
     {
-        if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', realpath('.'));
+        if (!\defined('ROOT_PATH')) {
+            \define('ROOT_PATH', realpath('.'));
         }
-        return require __DIR__ . '/../../../src/Client/Webapp/app.php';
+
+        return require __DIR__.'/../../../src/Client/Webapp/app.php';
     }
 }
