@@ -7,17 +7,27 @@ if (file_exists(ROOT_PATH.'/vendor/autoload.php') === false) {
 }
 require_once ROOT_PATH.'/vendor/autoload.php';
 
+use IWD\JOBINTERVIEW\BackendApplication;
+use IWD\JOBINTERVIEW\Provider\SurveysControllerProvider;
+use IWD\JOBINTERVIEW\Provider\SurveysServiceProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Silex\Application;
+use Silex\Provider\ServiceControllerServiceProvider;
 
-$app = new Application();
+$app = new BackendApplication();
+
+$app->register(new ServiceControllerServiceProvider());
+$app->register(new SurveysServiceProvider());
+
 $app->after(function (Request $request, Response $response) {
     $response->headers->set('Access-Control-Allow-Origin', '*');
 });
+
 $app->get('/', function () use ($app) {
-    return 'Status OK';
+    return new Response('Status OK');
 });
+
+$app->mount('/surveys', new SurveysControllerProvider());
 
 $app->run();
 

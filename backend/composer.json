@@ -1,7 +1,11 @@
 {
     "require": {
-        "php": ">=7.0",
-        "silex/silex": "^2.0"
+        "php": ">=7.2",
+        "silex/silex": "^2.0",
+        "symfony/serializer": "^4.3",
+        "doctrine/instantiator": "^1.2",
+        "doctrine/common": "^2.10",
+        "symfony/finder": "^4.3"
     },
     "autoload": {
         "psr-4": {
